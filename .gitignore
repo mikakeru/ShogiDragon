@@ -348,3 +348,4 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+/ShogiDragon/exe/scip-3.1.0.win.x86_64.msvc.opt.spx.mt.exe
