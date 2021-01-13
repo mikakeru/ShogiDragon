@@ -5,8 +5,7 @@ using System.Text;
 using System.IO;
 using System.Diagnostics;
 
-using ForSkicp;
-
+using ForScip;
 
 /*
  *   aeb
@@ -19,90 +18,27 @@ using ForSkicp;
 namespace RyuKiki
 {
 
-    class CheckCell
-    {
-        public readonly int m_t;                //  X座標  
-        public readonly int m_y;                //  Y座標
-        public readonly int m_group;            //  m_group<0 グループ立ち上げますかチェック　m_group>=0 グループ所属お誘いチェック　
-        //  int m_groupcnt      //  はまた別カウント
-
-        public CheckCell(int t, int y, int group)
-        {
-            m_t = t;
-            m_y = y;
-            m_group = group;
-        }
-    };
-
-
     class RyuKiki
     {
-        enum Kind
-        {
-            Tatesen,
-            Yokosen,
-            Masu,
-            Juji
-        };
-
         enum Koma
         {
             Uma,
             Ryu,
         };
 
+        /// <summary>
+        /// 変数を変えることによって問題をおおまかに変更
+        /// 細かく変えるときは、Mondai2Footerを修正
+        /// </summary>
         static Koma s_Koma = Koma.Ryu;
         static int s_kiki = 4;
         static int s_num = 35;
         static int s_tate = 9;
         static int s_yoko = 9;
-        // 10 数秒 15 数秒  20 数秒 26 1,2分
 
         /// <summary>
-        /// 全部の種類
-        /// 
-        /// 文字コードのままやりきる手はあるがとりあえずTAGに直す方法で
-        /// 
+        /// 解答をメモリ内に保持すための形式
         /// </summary>
-        enum AllTag
-        {
-            //  ベースとしてデバッグ用には何もなしがあった方が
-            NL,     //  NULL
-            //  問題文に現れるもの
-            WH,     //  白地
-            BC,     //  ●指定
-        }
-
-        enum EvenOdd /* 偶数奇数の組み合わせで */
-        {
-            Cross,
-            Vline,
-            Hline,  /* 横が奇数　なのは　横線　*/
-            Square,
-        }
-
-        class Cell
-        {
-            readonly public int m_tate;
-            readonly public int m_yoko;
-
-            // CeLL 作り出すときに、奇数偶数チェックや外だとかは入れてしまう。
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <param name="tate">サイズ</param>
-            /// <param name="yoko">サイズ</param>
-            /// <param name="t">ポジション</param>
-            /// <param name="y">ポジション</param>
-            /// <param name="soto"></param>
-            public Cell(int etate, int eyoko, int t, int y)
-            {
-                m_tate = t;
-                m_yoko = y;
-                //                m_symbol = makeSymbol("x", t, y);
-            }
-        };
-
         class Kotae
         {
             public int[,] array;
@@ -125,130 +61,14 @@ namespace RyuKiki
             }
         }
 
-
-
-
-        #region /* マスの種類 */
-
-
         /// <summary>
-        /// 文字から数字に直す
+        /// solファイルを読んでKotaeにする
         /// </summary>
-        /// <param name="ch"></param>
+        /// <param name="filesol"></param>
+        /// <param name="tate"></param>
+        /// <param name="yoko"></param>
         /// <returns></returns>
-        static int Char2Number(int ch)
-        {
-            // '0'-'9'
-            return ch - '0';
-        }
-
-        static char AllTag2Char(AllTag tag)
-        {
-            switch (tag)
-            {
-                case AllTag.NL: return (' ');
-                case AllTag.WH: return ('-');
-                case AllTag.BC: return ('*');
-            }
-            return ('?');
-        }
-
-        static int AllTag2Num(AllTag tag)
-        {
-            return (-1);
-        }
-
-        /// <summary>
-        /// とりあえずPDF基準で
-        /// </summary>
-        enum Tag
-        {
-            WH,
-            NW,
-            NE,
-            SW,
-            SE,
-            /// <summary>
-            /// 代表として黒
-            /// </summary>
-            BL,
-        }
-
-        //  外側がある
-        //  数字ののった黒
-        //  最初からただの黒
-
-
-        #endregion
-
-        #region /* シンボルはシンボル作りコーナーを通してから */
-
-        /// <summary>
-        /// 2次元の値から　xシンボルにする
-        /// 
-        /// 方向はでよいか
-        /// 0  1
-        /// 3  2
-        /// 
-        /// wh
-        /// nw
-        /// ne
-        /// 
-        /// 
-        /// </summary>
-        /// <param name="t"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
-        static string makeSymbol(string str, int t, int y)
-        {
-            return str + t.ToString("D2") + y.ToString("D2");
-        }
-
-        /// <summary>
-        /// 2次元の値から　sumシンボルにする
-        /// </summary>
-        /// <param name="t"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
-        static string ty2sum(int t, int y)
-        {
-            return "sum" + t.ToString("D2") + y.ToString("D2");
-        }
-
-        #endregion
-
-
-        //
-        //  線を引くけどひと枠多いところから
-        //  お外の線はなくてもよいが帰って迷うので大外の線から
-        //　・－・－
-        //　｜外｜
-        //　・－・－
-        //　｜　｜端
-        //　・－・
-
-        /// <summary>
-        /// 原稿の位置からテーブルの位置に直す
-        /// </summary>
-        /// <param name="t"></param>
-        /// <returns></returns>
-        static int genkou2tablepos(int x)
-        {
-            //  0だったら３
-            return (x * 2 + 3);
-        }
-
-        /// <summary>
-        /// 原稿データの数からtableの数に直す
-        /// </summary>
-        /// <param name="x"></param>
-        /// <returns></returns>
-        static int genkou2tablesize(int x)
-        {
-            return (x * 2 + 5);
-        }
-
-        static Kotae Sol2Table(string filesol, int tate, int yoko)
+        static Kotae Sol2Kotae(string filesol, int tate, int yoko)
         {
             Kotae kotae = new Kotae(tate, yoko);
 
@@ -272,215 +92,14 @@ namespace RyuKiki
             return kotae;
         }
 
-
-        static void Kotae2Final(Cell[,] mondai, Cell[,] kotae, Cell[,] kotae1, string filefinal)
-        {
-#if false
-            int tate = kotae.GetLength(0);
-            int yoko = kotae.GetLength(1);
-
-            using (StreamWriter sw = new StreamWriter(filefinal))
-            {
-                sw.WriteLine(@"\ " + DateTime.Now.ToString());
-                for (int t = 0; t < tate; t++)
-                {
-                    for (int y = 0; y < yoko; y++)
-                    {
-                        if (kotae[t, y].m_tag == AllTag.ON)
-                        {
-                            switch (kotae[t, y].m_tateyokoevenodd)
-                            {
-                                case EO.Hline: sw.Write("―"); break;
-                                case EO.Vline: sw.Write("｜"); break;
-                                case EO.Cross: sw.Write("・"); break;
-                                case EO.Square:
-                                    switch (mondai[t, y].m_tag)
-                                    {
-                                        case AllTag.N0: sw.Write("０"); break;
-                                        case AllTag.N1: sw.Write("１"); break;
-                                        case AllTag.N2: sw.Write("２"); break;
-                                        case AllTag.N3: sw.Write("３"); break;
-                                    }
-                                    break;
-                            }
-                        }
-                        else
-                        {
-                            sw.Write("　");
-                        }
-                    }
-                    sw.WriteLine("");
-                }
-
-                if (kotae1 != null)
-                {
-                    sw.WriteLine(@"\ " + DateTime.Now.ToString());
-                    for (int t = 0; t < tate; t++)
-                    {
-                        for (int y = 0; y < yoko; y++)
-                        {
-                            if (kotae[t, y].m_tag == AllTag.ON && kotae1[t,y].m_tag!=AllTag.ON)
-                            {
-                                switch (kotae[t, y].m_tateyokoevenodd)
-                                {
-                                    case EO.Hline: sw.Write("―"); break;
-                                    case EO.Vline: sw.Write("｜"); break;
-                                    case EO.Cross: sw.Write("・"); break;
-                                    case EO.Square:
-                                        switch (mondai[t, y].m_tag)
-                                        {
-                                            case AllTag.N0: sw.Write("０"); break;
-                                            case AllTag.N1: sw.Write("１"); break;
-                                            case AllTag.N2: sw.Write("２"); break;
-                                            case AllTag.N3: sw.Write("３"); break;
-                                        }
-                                        break;
-                                }
-                            }
-                            else
-                            {
-                                sw.Write("　");
-                            }
-                        }
-                        sw.WriteLine("");
-                    }
-                }
-            }
-#endif
-        }
-
-
-#if false
-        static void Display(int[,] kotae)
-        {
-            int tate = kotae.GetLength(0);
-            int yoko = kotae.GetLength(1);
-
-            for (int t = 0; t < tate; t++)
-            {
-                for (int y = 0; y < yoko; y++)
-                {
-                    if (kotae[t, y] == 0)
-                    {
-                        Debug.Write("□");
-                    }
-                    else
-                    {
-                        Debug.Write("■");
-                    }
-                }
-                Debug.WriteLine("");
-            }
-        }
-#endif
-
-#if false
         /// <summary>
-        /// TAGからCに直す
+        /// 盤面内であれば、-btyを書き出す
         /// </summary>
-        /// <param name="mondai"></param>
-        static void DebugWrite(Cell[,] mondai)
-        {
-            int tate = mondai.GetLength(0);
-            int yoko = mondai.GetLength(1);
-
-            for (int t = 0; t < tate; t++)
-            {
-                for (int y = 0; y < yoko; y++)
-                {
-                    char c=AllTag2Char(mondai[t,y].m_num);
-                    Debug.Write(c);
-                }
-                Debug.WriteLine("");
-            }
-        }
-#endif
-
-
-
-        //  方向Tag(intの方が気楽だが・・・）から　dt dy 縦横変化分を返すよ
-        //  左上基準
-        static void Tag2ty(Tag tag, out int dt, out int dy)
-        {
-            switch (tag)
-            {
-                case Tag.NW: dt = 0; dy = 0; break;
-                case Tag.NE: dt = 0; dy = 1; break;
-                case Tag.SW: dt = 1; dy = 0; break;
-                case Tag.SE: dt = 1; dy = 1; break;
-                default: dt = 0; dy = 0; break;
-            }
-        }
-
-        static Tag gyaku(Tag tag)
-        {
-            switch (tag)
-            {
-                case Tag.NW: return (Tag.SE);
-                case Tag.NE: return (Tag.SW);
-                case Tag.SW: return (Tag.NE);
-                case Tag.SE: return (Tag.NW);
-            }
-            return (Tag.BL);    // ここへはこないのだが
-        }
-
-        static void Append(string src, string log)
-        {
-            string[] str = File.ReadAllLines(src, Encoding.GetEncoding("shift_jis"));
-            File.AppendAllLines(log, str, Encoding.GetEncoding("shift_jis"));
-        }
-
-        // ヘッダーは実質中身なし
-        static string Mondai2Header()
-        {
-            using (StringWriter sw = new StringWriter())
-            {
-                //  日付などかいて
-                sw.WriteLine(@"\ " + DateTime.Now.ToString());
-
-                //  これはミニマイズはダミー
-                sw.WriteLine("Maximize");
-                sw.WriteLine(" value: dummy");
-
-                return sw.ToString();
-            }
-        }
-
-        /// <summary>
-        /// 一次元の長さから
-        /// </summary>
-        /// <param name="length"></param>
-        /// <param name="position"></param>
-        /// <returns></returns>
-        static int Position2NumChoices(int length, int position)
-        {
-            int a = position;
-            int b = (length - 1 - position);
-            int c = Math.Min(a, b);
-            return c;
-        }
-
-        static void condadd(List<string> list, int t, int y)
-        {
-            if (t >= 0 && t < 4 && y >= 0 && y < 4)
-            {
-                list.Add("c" + t.ToString() + y.ToString());
-            }
-        }
-
-
-        static List<string> make_ato_cell(int t, int y)
-        {
-            List<string> list = new List<string>();
-
-            condadd(list, t - 1, y);
-            condadd(list, t + 1, y);
-            condadd(list, t, y - 1);
-            condadd(list, t, y + 1);
-
-            return list;
-        }
-
+        /// <param name="tate"></param>
+        /// <param name="yoko"></param>
+        /// <param name="t"></param>
+        /// <param name="y"></param>
+        /// <param name="sw"></param>
         static void WroteTheNameIfInTheArea(int tate, int yoko, int t, int y, StringWriter sw)
         {
             if (1 <= t && t <= tate && 1 <= y && y <= yoko)
@@ -489,6 +108,15 @@ namespace RyuKiki
             }
         }
 
+        /// <summary>
+        /// 盤面内であれば、指定のstrを書き出す
+        /// </summary>
+        /// <param name="tate"></param>
+        /// <param name="yoko"></param>
+        /// <param name="t"></param>
+        /// <param name="y"></param>
+        /// <param name="str"></param>
+        /// <param name="sw"></param>
         static void WriteTheStringIfInTheArea(int tate, int yoko, int t, int y, string str, StringWriter sw)
         {
             if (1 <= t && t <= tate && 1 <= y && y <= yoko)
@@ -497,12 +125,20 @@ namespace RyuKiki
             }
         }
 
-        static void Mondai2FooterSub0(int tate, int yoko, int t, int y, StringWriter sw)
+        /// <summary>
+        /// ひとつの位置に関して、８つの方向の「利きの式」を記載
+        /// </summary>
+        /// <param name="tate"></param>
+        /// <param name="yoko"></param>
+        /// <param name="t"></param>
+        /// <param name="y"></param>
+        /// <param name="sw"></param>
+        static void WriteForEachSquare(int tate, int yoko, int t, int y, StringWriter sw)
         {
             sw.WriteLine("\\ kiki");
             sw.WriteLine($" b{t}{y} = 1 -> n{t}{y} = {s_kiki}");
 
-            // 聞き数を数える      wa -member0 -member1 - member2 - member3 = 0 という形
+            // 利き数を数える      wa -member0 -member1 - member2 - member3 = 0 という形
             sw.WriteLine("\\ wa");
             sw.Write($" n{t}{y} ");
 
@@ -522,7 +158,7 @@ namespace RyuKiki
             }
             else if (s_Koma == Koma.Ryu)
             {
-                // efghはブチヌキの利き  龍だと
+                // 龍だとefghはブチヌキの利き  
                 //    e
                 //  f   g
                 //    h  とする
@@ -541,52 +177,30 @@ namespace RyuKiki
             sw.WriteLine(" = 0");
         }
 
-        static void abcd2dtdy(int abcd, out int dt, out int dy)
+        /// <summary>
+        /// lp用のヘッダー生成
+        /// </summary>
+        static string Mondai2Header()
         {
-            dt = 0;
-            dy = 0;
-            switch (abcd)
+            using (StringWriter sw = new StringWriter())
             {
-                case 0: dt = -1; dy = -1; break;
-                case 1: dt = -1; dy = +1; break;
-                case 2: dt = +1; dy = -1; break;
-                case 3: dt = +1; dy = +1; break;
+                //  日付などかいて
+                sw.WriteLine(@"\ " + DateTime.Now.ToString());
+
+                //  これはミニマイズはダミー
+                sw.WriteLine("Maximize");
+                sw.WriteLine(" value: dummy");
+
+                return sw.ToString();
             }
-            return;
         }
 
-
-        static void efgh2etey(int abcd, int tate, int yoko, out int et, out int ey)
-        {
-            et = 0;
-            ey = 0;
-
-            // 上も下もどちらもぎり内部の値
-            switch (abcd)
-            {
-                case 0: et = 1; ey = 1; break;
-                case 1: et = 1; ey = yoko; break;
-                case 2: et = tate; ey = 1; break;
-                case 3: et = tate; ey = yoko; break;
-            }
-            return;
-        }
-
-
-        static string abcd2symbol(int abcd)
-        {
-            string symbol = "";
-            switch (abcd)
-            {
-                case 0: symbol = "a"; break;
-                case 1: symbol = "b"; break;
-                case 2: symbol = "c"; break;
-                case 3: symbol = "d"; break;
-            }
-            return symbol;
-        }
-
-
+        /// <summary>
+        /// 問題lpファイルの下部分を作成する
+        /// </summary>
+        /// <param name="tate"></param>
+        /// <param name="yoko"></param>
+        /// <returns></returns>
         static string Mondai2Footer(int tate, int yoko)
         {
             using (StringWriter sw = new StringWriter())
@@ -611,7 +225,7 @@ namespace RyuKiki
                 {
                     for (int y = 1; y <= yoko; y++)
                     {
-                        Mondai2FooterSub0(tate, yoko, t, y, sw);
+                        WriteForEachSquare(tate, yoko, t, y, sw);
                     }
                 }
 
@@ -728,47 +342,11 @@ namespace RyuKiki
             }
         }
 
-        //        static private void checkSub(CheckCell cl, Cell[,] kotae,ref int[,] checkmap,ref int m_group,ref Stack<CheckCell> checkstack)
         /// <summary>
-        /// ループをわけて登録したい
+        /// Kotaeから図をテキストで掃き出す
         /// </summary>
         /// <param name="kotae"></param>
-        /// <returns></returns>
-        static string Kotae2Subject(Kotae kotae)
-        {
-            using (StringWriter sw = new StringWriter())
-            {
-                //// 最初のスペース
-                //sw.Write(" ");
-                //for (int a = 0; a < 8; a++)
-                //{
-                //    sw.Write($"a{a}_{kotae.aarray[a]} + ");
-                //}
-                //for (int a = 0; a < 8; a++)
-                //{
-                //    sw.Write($"a{a}_{kotae.aarray[a]} + ");
-                //}
-                //sw.WriteLine("0 < 15");
-                return sw.ToString();
-            }
-        }
-
-        static string Bc2Str(bool bBc)
-        {
-            if (bBc)
-            {
-                return ("●");
-            }
-            else
-            {
-                return ("　");
-            }
-        }
-
-        static void Mondai2Csv(Cell[,] mondai, string csvfile)
-        {
-        }
-
+        /// <param name="filename"></param>
         static void Kotae2Txt(Kotae kotae, string filename)
         {
             using (StreamWriter sw = new StreamWriter(filename, false, System.Text.Encoding.UTF8))
@@ -791,14 +369,9 @@ namespace RyuKiki
             }
         }
 
-
-
-
         /// <summary>
-        /// 
-        /// 細かいループ封じネタがいるので記憶をもった
-        /// 
-        /// 
+        /// main関数
+        /// forループを使って別解探索などにあてる
         /// </summary>
         /// <param name="args"></param>
         static void Main(string[] args)
@@ -816,9 +389,7 @@ namespace RyuKiki
             oazukari.Set(Oazukari.HSF.Header, Mondai2Header());
             oazukari.Set(Oazukari.HSF.Footer, Mondai2Footer(tate, yoko));
 
-            int kai = 0;
-            Kotae prevKotae = null;
-            for (int i = 0; ; i++)
+            // for文候補
             {
                 // 現行のlpを記録
                 string filelp = fileNameExt.GetFilename(".lp");
@@ -829,16 +400,14 @@ namespace RyuKiki
                 Util.Lp2Sol(filelp, filesol);
 
                 //  SOL読む
-                Kotae kotae = Sol2Table(filesol, tate, yoko);
+                Kotae kotae = Sol2Kotae(filesol, tate, yoko);
 
                 // 試しに書きだす
                 Kotae2Txt(kotae, fileNameExt.GetFilename(".kotae.txt"));
-
-                break;
             }
 
+            // ファイルの削除
             string[] files = Directory.GetFiles(@".\", @"tmp.txt*");
-
             for (int i = 0; i < files.Length; i++)
             {
                 //                File.Delete(files[i]);
@@ -849,8 +418,16 @@ namespace RyuKiki
 
     }
 }
-namespace ForSkicp
-{
+
+/// <summary>
+/// SCIP利用ようのアイテム群
+// </summary>
+namespace ForScip
+{ 
+    /// <summary>
+    /// lpfileの内容をTXTとしてあずかる
+    /// 別解探索のための追加機構あり
+    /// </summary>
     class Oazukari
     {
         public enum HSF
@@ -894,7 +471,10 @@ namespace ForSkicp
     }
 
 
-
+    /// <summary>
+    /// あるファイル名をもとに、カウントアップ数字を含んだファイル名を次々と作り出す。
+    /// 履歴を追うのに便利
+    /// </summary>
     class FilenameNumExt
     {
         readonly string m_stem;    //  ピリオドなし
@@ -921,33 +501,17 @@ namespace ForSkicp
 
     }
 
-
+    /// <summary>
+    /// lpファイルを解いて,
+    /// </summary>
     static class Util
     {
         /// <summary>
-        /// 変数を作り出す
-        /// シンボル＋二桁＋二桁
-        /// </summary>
-        /// <param name="str"></param>
-        /// <param name="t"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
-        public static string SymbolD2D2(string str, int t, int y)
-        {
-            return str + t.ToString("D2") + y.ToString("D2");
-        }
-
-        public static string SymbolD2(string str, int t)
-        {
-            return str + t.ToString("D2");
-        }
-
-        /// <summary>
         /// 問題の種類に限らず共通
         /// </summary>
-        /// <param name="lpfile"></param>
-        /// <param name="result"></param>
-        public static void Lp2Sol(string lpfile, string result)
+        /// <param name="lpfile">lpfile名</param>
+        /// <param name="solfile">solfile名</param>
+        public static void Lp2Sol(string lpfile, string solfile)
         {
             Process myProcess = new Process();
             myProcess.StartInfo.FileName = "../../exe/scip-3.1.0.win.x86_64.msvc.opt.spx.mt.exe";
@@ -962,7 +526,7 @@ namespace ForSkicp
 
             myStreamWriter.WriteLine("read " + lpfile);
             myStreamWriter.WriteLine("optimize");
-            myStreamWriter.WriteLine("write solution " + result);
+            myStreamWriter.WriteLine("write solution " + solfile);
             myStreamWriter.WriteLine("quit");
             myStreamWriter.Close();
 
