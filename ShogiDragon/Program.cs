@@ -7,16 +7,15 @@ using System.Diagnostics;
 
 using ForScip;
 
-/*
- *   aeb
- *   f g
- *   chd
- * 
- *  abcdを先に決めたので、efghをあとで追加
- */
-
 namespace RyuKiki
 {
+    /*
+     *   aeb
+     *   f g
+     *   chd
+     * 
+     *  abcdを先に決めたので、efghをあとで追加
+     */
 
     class RyuKiki
     {
@@ -376,15 +375,14 @@ namespace RyuKiki
         /// <param name="args"></param>
         static void Main(string[] args)
         {
-            string fileprob = "tmp.txt";
+            string filetmp = "tmp.txt";
             int tate = s_tate;
             int yoko = s_yoko;
 
             // 一つのファイルをもとにファイル名の拡張番号付きシステムを作る
-            FilenameNumExt fileNameExt = new FilenameNumExt(fileprob);
+            FilenameNumExt fileNameExt = new FilenameNumExt(filetmp);
 
             // サブジェクトの下地を作る
-            // スクリプトの
             Oazukari oazukari = new Oazukari();
             oazukari.Set(Oazukari.HSF.Header, Mondai2Header());
             oazukari.Set(Oazukari.HSF.Footer, Mondai2Footer(tate, yoko));
@@ -423,7 +421,7 @@ namespace RyuKiki
 /// SCIP利用ようのアイテム群
 // </summary>
 namespace ForScip
-{ 
+{
     /// <summary>
     /// lpfileの内容をTXTとしてあずかる
     /// 別解探索のための追加機構あり
@@ -502,7 +500,7 @@ namespace ForScip
     }
 
     /// <summary>
-    /// lpファイルを解いて,
+    /// lpファイルを解いてsolファイルに書き出す
     /// </summary>
     static class Util
     {
