@@ -5,7 +5,7 @@ using System.Text;
 using System.IO;
 using System.Diagnostics;
 
-using ForScip;
+using ForSCIP;
 
 namespace RyuKiki
 {
@@ -420,7 +420,7 @@ namespace RyuKiki
 /// <summary>
 /// SCIP利用ようのアイテム群
 // </summary>
-namespace ForScip
+namespace ForSCIP
 {
     /// <summary>
     /// lpfileの内容をTXTとしてあずかる
@@ -512,7 +512,7 @@ namespace ForScip
         public static void Lp2Sol(string lpfile, string solfile)
         {
             Process myProcess = new Process();
-            myProcess.StartInfo.FileName = "../../exe/scip-3.1.0.win.x86_64.msvc.opt.spx.mt.exe";
+            myProcess.StartInfo.FileName = @"C:\Program Files\SCIPOptSuite 7.0.2\bin\scip.exe";
             myProcess.StartInfo.UseShellExecute = false;
             myProcess.StartInfo.RedirectStandardInput = true;
             myProcess.StartInfo.RedirectStandardOutput = true;
