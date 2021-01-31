@@ -10,11 +10,12 @@ using ForSCIP;
 namespace RyuKiki
 {
     /*
-     *   aeb
-     *   f g
-     *   chd
+     * Alphabet that represents the direction when moving any number of empty squares.
      * 
-     *  abcdを先に決めたので、efghをあとで追加
+     * aeb
+     * f g
+     * chd
+     *
      */
 
     class RyuKiki
@@ -26,9 +27,10 @@ namespace RyuKiki
         };
 
         /// <summary>
-        /// 変数を変えることによって問題をおおまかに変更
-        /// 細かく変えるときは、Mondai2Footerを修正
+        /// Roughly change the problem by changing the variables.
+        /// If you want to add conditions , modify "Mondai2Footer".
         /// </summary>
+
         static Koma s_Koma = Koma.Ryu;
         static int s_kiki = 4;
         static int s_num = 35;
