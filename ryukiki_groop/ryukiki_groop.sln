@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30204.135
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "knight5", "knight5\knight5.csproj", "{B8B3AAEA-133C-4C04-848A-208F022AB21E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B8B3AAEA-133C-4C04-848A-208F022AB21E}.Debug|x64.ActiveCfg = Debug|x64
+		{B8B3AAEA-133C-4C04-848A-208F022AB21E}.Debug|x64.Build.0 = Debug|x64
+		{B8B3AAEA-133C-4C04-848A-208F022AB21E}.Debug|x86.ActiveCfg = Debug|x86
+		{B8B3AAEA-133C-4C04-848A-208F022AB21E}.Debug|x86.Build.0 = Debug|x86
+		{B8B3AAEA-133C-4C04-848A-208F022AB21E}.Release|x64.ActiveCfg = Release|x64
+		{B8B3AAEA-133C-4C04-848A-208F022AB21E}.Release|x64.Build.0 = Release|x64
+		{B8B3AAEA-133C-4C04-848A-208F022AB21E}.Release|x86.ActiveCfg = Release|x86
+		{B8B3AAEA-133C-4C04-848A-208F022AB21E}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {239E6841-FFC6-4DC3-81A5-4010071026D4}
+	EndGlobalSection
+EndGlobal
